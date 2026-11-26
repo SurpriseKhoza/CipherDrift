@@ -1,0 +1,27 @@
+name: Validate CipherDrift source
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+
+jobs:
+  source-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Verify project structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f ProjectSettings/ProjectVersion.txt
+          test -f Packages/manifest.json
+          test -f Assets/Game/Scripts/Vehicles/DriftVehicleController.cs
+          test -f Assets/Editor/BuildAutomation/DriftAndroidBuild.cs
+          test -f .github/workflows/android-build.yml
+          python3 -m json.tool Packages/manifest.json >/dev/null
+          git diff --check
