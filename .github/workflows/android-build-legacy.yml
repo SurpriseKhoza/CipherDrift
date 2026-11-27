@@ -3,7 +3,7 @@ name: CipherDrift Android (legacy Unity)
 on:
   workflow_dispatch:
   push:
-    branches: [legacy-unity-2022]:
+    branches: [legacy-unity-2022]
 
 jobs:
   android:
