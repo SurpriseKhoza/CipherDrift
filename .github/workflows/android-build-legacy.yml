@@ -1,0 +1,40 @@
+name: CipherDrift Android (legacy Unity)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: jlumbroso/free-disk-space@v1.2.0
+
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Android-legacy-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: Library-Android-legacy-
+
+      - name: Build with Unity
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: .
+          unityVersion: 2022.3.10f1
+          targetPlatform: Android
+          buildMethod: CipherDrift.Editor.BuildAutomation.BuildEntrypoint.BuildAndroid
+          allowDirtyBuild: false
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CipherDrift-Android-legacy
+          path: |
+            build/**/*.apk
+            build/**/*.obb
+          if-no-files-found: error
